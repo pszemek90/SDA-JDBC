@@ -14,55 +14,68 @@ class EmployeeDAOTest {
     private static final String USER = "root";
     private static final String PASSWORD = "qwerty";
     private Connection connection;
-    private EmployeeDAO employeeDAO;
 
     @BeforeEach
     void setUp() throws SQLException {
         connection = DriverManager.getConnection(URL, USER, PASSWORD);
-        employeeDAO = new EmployeeDAO(connection);
     }
 
     @AfterEach
     void tearDown() throws SQLException {
-        employeeDAO.close();
         connection.close();
     }
 
     @Test
-    void shouldCreateEmployee() throws SQLException {
+    void shouldCreateEmployee() {
         //given
-        Employee employee = new Employee(12, "Andrzej", "Duda", 12500,
-                Date.valueOf("2020-08-09"), "President");
-        //when
-        int result = employeeDAO.create(employee);
-        //then
-        assertEquals(1,result);
+        try (EmployeeDAO employeeDAO = new EmployeeDAO(connection)) {
+            Employee employee = new Employee(12, "Andrzej", "Duda", 12500,
+                    Date.valueOf("2020-08-09"), "President");
+            //when
+            int result = employeeDAO.create(employee);
+            //then
+            assertEquals(1, result);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
-    void shouldDeleteEmployee() throws SQLException {
-        //when
-        int result = employeeDAO.delete(12);
-        //then
-        assertEquals(1,result);
+    void shouldDeleteEmployee() {
+        try (EmployeeDAO employeeDAO = new EmployeeDAO(connection)) {
+            //when
+            int result = employeeDAO.delete(12);
+            //then
+            assertEquals(1, result);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
-    void shouldReadEmployee() throws SQLException {
-        //when
-        Employee resultEmployee = employeeDAO.read(12);
-        //then
-        assertEquals(new Employee(12, "Andrzej", "Duda", 12500,
-                Date.valueOf("2020-08-09"), "President"), resultEmployee);
+    void shouldReadEmployee() {
+        try (EmployeeDAO employeeDAO = new EmployeeDAO(connection)) {
+            //when
+            Employee resultEmployee = employeeDAO.read(12);
+            //then
+            assertEquals(new Employee(12, "Andrzej", "Duda", 12500,
+                    Date.valueOf("2020-08-09"), "President"), resultEmployee);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
-    void shouldUpdateEmployees() throws SQLException{
-        //when
-        String column = "first_name";
-        String newName = "Bogdan";
-        int updatedEmployee = employeeDAO.update(12, column, newName);
-        //then
-        assertEquals(1,updatedEmployee);
+    void shouldUpdateEmployees() {
+        try (EmployeeDAO employeeDAO = new EmployeeDAO(connection)) {
+            //when
+            String column = "first_name";
+            String newName = "Bogdan";
+            int updatedEmployee = employeeDAO.update(12, column, newName);
+            //then
+            assertEquals(1, updatedEmployee);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 }
